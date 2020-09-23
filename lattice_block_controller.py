@@ -1,17 +1,17 @@
 import sys, os
 import serial
 from serial.tools import list_ports
-from PyQt5 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 from maestro import *
 
 class lattice_block_gui(QtWidgets.QMainWindow):
     chan = 0
-    direct_pos = 500
-    nothing_pos = 1500
-    indirect_pos = 2500
+    direct_pos = 1500*4
+    nothing_pos = 1094*4
+    indirect_pos = 611*4
     max_spd = 15
-    min_pos = 64
-    max_pos = 2500
+    min_pos = 600*4
+    max_pos = 1500*4
 
     def __init__(self, Parent=None):
         super(lattice_block_gui, self).__init__(Parent)
@@ -31,7 +31,7 @@ class lattice_block_gui(QtWidgets.QMainWindow):
             print(e)
             msg = QtWidgets.QMessageBox()
             msg.setText("Could not connect! Sad.")
-            msg.exec()
+            msg.exec_()
             sys.exit()
         
         self.controller.setRange(self.chan, self.min_pos, self.max_pos)
@@ -61,19 +61,21 @@ class lattice_block_gui(QtWidgets.QMainWindow):
         self.setCentralWidget(mainWidget)
 
     def direct(self):
+        print("blocking direct!")
         self.controller.setTarget(self.chan, self.direct_pos)
         self.none_button.setEnabled(True)
         self.dir_button.setEnabled(False)
         self.indir_button.setEnabled(True)
 
-
     def indirect(self):
+        print("blocking indirect!")
         self.controller.setTarget(self.chan, self.indirect_pos)
         self.none_button.setEnabled(True)
         self.dir_button.setEnabled(True)
         self.indir_button.setEnabled(False)
 
     def nothing(self):
+        print("blocking nothing!")
         self.controller.setTarget(self.chan, self.nothing_pos)
         self.none_button.setEnabled(False)
         self.dir_button.setEnabled(True)
@@ -97,7 +99,7 @@ if __name__ == "__main__":
     timer.start(100)
 
     # Run event loop
-    ret = app.exec()
+    ret = app.exec_()
     if w.controller is not None:
         w.controller.close()
     sys.exit(ret)
